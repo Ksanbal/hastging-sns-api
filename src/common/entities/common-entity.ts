@@ -34,13 +34,13 @@ export abstract class CommonEntity extends BaseEntity {
   })
   createAt: Date;
 
-  @ApiProperty({
-    example: '2022-07-13T04:22:24.489Z',
-    description: '수정일',
-    required: false,
-  })
-  @UpdateDateColumn({ type: 'datetime', comment: '수정일' })
-  updateAt: Date;
+  // @ApiProperty({
+  //   example: '2022-07-13T04:22:24.489Z',
+  //   description: '수정일',
+  //   required: false,
+  // })
+  // @UpdateDateColumn({ type: 'datetime', comment: '수정일' })
+  // updateAt: Date;
 
   @ApiProperty({
     example: '2022-07-13T04:22:24.489Z',
