@@ -1,4 +1,4 @@
-import { IsEmail, MaxLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MaxLength } from 'class-validator';
 import { CommonEntity } from 'src/common/entities/common-entity';
 import { Column, Entity } from 'typeorm';
 
@@ -11,6 +11,7 @@ export class UserEntity extends CommonEntity {
   email: string;
 
   @Column()
+  @IsNotEmpty()
   password: string;
 
   @Column({
