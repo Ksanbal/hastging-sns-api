@@ -1,6 +1,7 @@
 import { MaxLength } from 'class-validator';
+import { UserEntity } from 'src/api/users/entities/user.entity';
 import { CommonEntity } from 'src/common/entities/common-entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({
   name: 'post',
@@ -33,4 +34,11 @@ export class PostEntity extends CommonEntity {
     default: 0,
   })
   views: number;
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({
+    name: 'user_id',
+    referencedColumnName: 'id',
+  })
+  author: UserEntity;
 }
