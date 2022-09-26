@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../users/entities/user.entity';
 import { CreatePostDto } from './dtos/createPost.dto';
+import { PostDto } from './dtos/post.dto';
 import { PostEntity } from './entities/post.entity';
 
 @Injectable()
@@ -25,6 +26,24 @@ export class PostsService {
     // 작성자 정보 추가
     newPost.author = user;
     await newPost.save();
+  }
+
+  /**
+   * @description 게시물 상세정보, 조회시마다 view(조회수) 증가
+   */
+  async retrieve(id: number) {
+    // id로 post(join user) 가져오기
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
+    if (!post) throw new NotFoundException();
+
+    // 조회수 증가
+    post.views += 1;
+    await post.save();
+
+    return new PostDto(post);
   }
 
   /**
