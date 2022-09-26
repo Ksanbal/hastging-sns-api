@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -32,5 +33,10 @@ export class PostsController {
     @Body() createPostDto: CreatePostDto,
   ) {
     return this.postsService.edit(user, id, createPostDto);
+  }
+
+  @Delete(':id')
+  softDelete(@CurrentUser() user: UserEntity, @Param('id') id: number) {
+    return this.postsService.softDelete(user, id);
   }
 }

@@ -46,4 +46,24 @@ export class PostsService {
     // 정보 업데이트
     await this.postsRepository.update({ id }, createPostDto);
   }
+
+  /**
+   * @description 게시물 삭제, 작성자만 삭제 가능
+   */
+  async softDelete(user: UserEntity, id: number) {
+    // id로 post(join user) 가져오기
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
+    if (!post) throw new NotFoundException();
+
+    // user 권한 체크
+    if (post.author.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    // soft delte
+    await post.softRemove();
+  }
 }
