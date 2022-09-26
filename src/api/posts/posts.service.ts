@@ -66,4 +66,25 @@ export class PostsService {
     // soft delte
     await post.softRemove();
   }
+
+  /**
+   * @description 게시물 복구, 작성자만 복구 가능
+   */
+  async restore(user: UserEntity, id: number) {
+    // id로 post(join user) 가져오기
+    const post = await this.postsRepository.findOne({
+      where: { id },
+      relations: ['author'],
+      withDeleted: true, // 삭제된 row 포함 옵션
+    });
+    if (!post) throw new NotFoundException();
+
+    // user 권한 체크
+    if (post.author.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    // 복구
+    await post.recover(); // post.deleteAt = null; post.save()와 같음
+  }
 }

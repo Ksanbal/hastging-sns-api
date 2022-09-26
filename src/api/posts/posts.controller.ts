@@ -39,4 +39,9 @@ export class PostsController {
   softDelete(@CurrentUser() user: UserEntity, @Param('id') id: number) {
     return this.postsService.softDelete(user, id);
   }
+
+  @Patch(':id/restore')
+  restore(@CurrentUser() user: UserEntity, @Param('id') id: number) {
+    return this.postsService.restore(user, id);
+  }
 }
