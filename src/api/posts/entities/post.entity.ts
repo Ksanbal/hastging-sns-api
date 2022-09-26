@@ -1,4 +1,4 @@
-import { MaxLength } from 'class-validator';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 import { UserEntity } from 'src/api/users/entities/user.entity';
 import { CommonEntity } from 'src/common/entities/common-entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
@@ -16,10 +16,12 @@ export class PostEntity extends CommonEntity {
   @Column({
     type: 'text',
   })
+  @IsNotEmpty()
   body: string;
 
   @Column({
     type: 'text',
+    nullable: true,
   })
   hastags: string;
 
