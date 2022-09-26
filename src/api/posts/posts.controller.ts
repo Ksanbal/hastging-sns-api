@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { UserEntity } from '../users/entities/user.entity';
@@ -16,5 +23,14 @@ export class PostsController {
     @Body() createPostDto: CreatePostDto,
   ) {
     return this.postsService.create(user, createPostDto);
+  }
+
+  @Patch(':id')
+  edit(
+    @CurrentUser() user: UserEntity,
+    @Param('id') id: number,
+    @Body() createPostDto: CreatePostDto,
+  ) {
+    return this.postsService.edit(user, id, createPostDto);
   }
 }
