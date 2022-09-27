@@ -4,17 +4,23 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
 import { Repository } from 'typeorm';
+import { AuthService } from '../auth/auth.service';
 import { UserEntity } from '../users/entities/user.entity';
 import { CreatePostDto } from './dtos/createPost.dto';
 import { PostDto } from './dtos/post.dto';
 import { PostEntity } from './entities/post.entity';
+import { PostLikeEntity } from './entities/postLike.entity';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(PostEntity)
     private readonly postsRepository: Repository<PostEntity>,
+    @InjectRepository(PostLikeEntity)
+    private readonly postlikeRepository: Repository<PostLikeEntity>,
+    private readonly authService: AuthService,
   ) {}
 
   /**
@@ -31,7 +37,7 @@ export class PostsService {
   /**
    * @description 게시물 상세정보, 조회시마다 view(조회수) 증가
    */
-  async retrieve(id: number) {
+  async retrieve(req: Request, id: number) {
     // id로 post(join user) 가져오기
     const post = await this.postsRepository.findOne({
       where: { id },
@@ -43,7 +49,24 @@ export class PostsService {
     post.views += 1;
     await post.save();
 
-    return new PostDto(post);
+    // 좋아요를 누른 적 있는지 검색
+    let didLiked = false;
+
+    // jwt로 로그인 가져오기
+    const userId = this.authService.getCurrentUser(req);
+
+    // 로그인된 유저인 경우
+    if (userId) {
+      const postLike = await this.postlikeRepository.findOne({
+        where: {
+          post: { id },
+          user: { id: userId },
+        },
+      });
+      didLiked = postLike !== null;
+    }
+
+    return new PostDto(post, didLiked);
   }
 
   /**

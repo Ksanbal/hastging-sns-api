@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/user.decorator';
@@ -28,8 +29,8 @@ export class PostsController {
   }
 
   @Get(':id')
-  retrieve(@Param('id') id: number) {
-    return this.postsService.retrieve(id);
+  retrieve(@Req() req, @Param('id') id: number) {
+    return this.postsService.retrieve(req, id);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -4,7 +4,9 @@ import { PostEntity } from '../entities/post.entity';
 export class PostDto extends OmitType(PostEntity, ['deleteAt', 'author']) {
   author: string;
 
-  constructor(post: PostEntity) {
+  didLiked: boolean;
+
+  constructor(post: PostEntity, didLiked: boolean) {
     super();
     this.id = post.id;
     this.title = post.title;
@@ -15,5 +17,6 @@ export class PostDto extends OmitType(PostEntity, ['deleteAt', 'author']) {
     this.views = post.views;
     // 작성자
     this.author = post.author.nickname;
+    this.didLiked = didLiked;
   }
 }
