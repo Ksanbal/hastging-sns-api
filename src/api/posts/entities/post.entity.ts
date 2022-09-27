@@ -37,7 +37,7 @@ export class PostEntity extends CommonEntity {
   })
   views: number;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'user_id',
     referencedColumnName: 'id',
