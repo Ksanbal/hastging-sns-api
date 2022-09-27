@@ -5,10 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository } from 'typeorm';
 import { AuthService } from '../auth/auth.service';
 import { UserEntity } from '../users/entities/user.entity';
 import { CreatePostDto } from './dtos/createPost.dto';
+import { ListPostDto } from './dtos/listPost.dto';
+import { ListPostQueryDto } from './dtos/listPost.query.dto';
 import { PostDto } from './dtos/post.dto';
 import { PostEntity } from './entities/post.entity';
 import { PostLikeEntity } from './entities/postLike.entity';
@@ -24,6 +26,37 @@ export class PostsService {
   ) {}
 
   /**
+   * @description 게시물 목록
+   */
+  async list(listPostQueryDto: ListPostQueryDto) {
+    const { orderBy, order, search, filter, page, pageCount } =
+      listPostQueryDto;
+
+    const findManyOption: FindManyOptions = {};
+
+    // [] filter
+    findManyOption.where = {};
+    if (filter) {
+    }
+
+    // [x] search
+    if (search) {
+      findManyOption.where['title'] = Like(`%${search}%`);
+    }
+
+    // [x] order
+    findManyOption.order = {};
+    findManyOption.order[orderBy] = order;
+
+    // [x] pagination
+    findManyOption.take = pageCount;
+    findManyOption.skip = pageCount * (page - 1);
+
+    const posts = await this.postsRepository.find(findManyOption);
+    return posts.map((post) => new ListPostDto(post));
+  }
+
+  /**
    * @description 게시물 생성
    */
   async create(user: UserEntity, createPostDto: CreatePostDto) {
@@ -31,6 +64,7 @@ export class PostsService {
     const newPost = this.postsRepository.create(createPostDto);
     // 작성자 정보 추가
     newPost.author = user;
+
     await newPost.save();
   }
 

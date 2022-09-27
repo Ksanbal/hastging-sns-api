@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -13,11 +14,17 @@ import { CurrentUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { UserEntity } from '../users/entities/user.entity';
 import { CreatePostDto } from './dtos/createPost.dto';
+import { ListPostQueryDto } from './dtos/listPost.query.dto';
 import { PostsService } from './posts.service';
 
 @Controller('api/posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
+
+  @Get()
+  list(@Query() listPostQueryDto: ListPostQueryDto) {
+    return this.postsService.list(listPostQueryDto);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post()
