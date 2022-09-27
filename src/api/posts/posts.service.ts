@@ -70,6 +70,34 @@ export class PostsService {
   }
 
   /**
+   * @description 게시물 좋아요, 있으면 삭제 없으면 생성
+   */
+  async like(user: UserEntity, id: number) {
+    const post = await this.postsRepository.findOne({ where: { id } });
+    if (!post) throw new NotFoundException();
+
+    // id, user.id로 좋아요 기록이 있는지 확인
+    const postLike = await this.postlikeRepository.findOne({
+      where: {
+        post: { id },
+        user: { id: user.id },
+      },
+    });
+
+    if (postLike) {
+      // 있다면 삭제, like - 1
+      await postLike.remove();
+      post.likes -= 1;
+      await post.save();
+    } else {
+      // 없다면 생성, like + 1
+      await this.postlikeRepository.create({ post, user }).save();
+      post.likes += 1;
+      await post.save();
+    }
+  }
+
+  /**
    * @description 게시물 수정, 작성자만 수정 가능
    */
   async edit(user: UserEntity, id: number, createPostDto: CreatePostDto) {

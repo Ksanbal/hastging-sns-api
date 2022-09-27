@@ -1,11 +1,17 @@
 import { UserEntity } from 'src/api/users/entities/user.entity';
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { PostEntity } from './post.entity';
 
 @Entity({
   name: 'post_like',
 })
-export class PostLikeEntity {
+export class PostLikeEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

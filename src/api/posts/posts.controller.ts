@@ -50,6 +50,12 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post(':id/like')
+  like(@CurrentUser() user: UserEntity, @Param('id') id: number) {
+    return this.postsService.like(user, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/restore')
   restore(@CurrentUser() user: UserEntity, @Param('id') id: number) {
     return this.postsService.restore(user, id);
