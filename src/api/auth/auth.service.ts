@@ -5,6 +5,7 @@ import { UserEntity } from '../users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from '../users/dtos/loginUser.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -29,5 +30,25 @@ export class AuthService {
     }
 
     throw new UnauthorizedException(['이메일과 비밀번호를 입력해주세요.']);
+  }
+
+  /**
+   * @description req로 현재 유저 id get
+   * @param req
+   * @returns token이 있으면 userId, 없으면 null
+   */
+  getCurrentUser(req: Request): number | null {
+    // header에서 authorization 구하기
+    const authorization = req.header('authorization');
+
+    // authorization가 없으면
+    if (!authorization) {
+      return null;
+    }
+
+    // 있으면 token의 sub 구하기
+    const token = authorization.split(' ')[1];
+    const decodedToken = this.jwtService.decode(token);
+    return decodedToken.sub;
   }
 }
